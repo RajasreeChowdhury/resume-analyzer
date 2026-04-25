@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://resume-analyzer-zeta-taupe.vercel.app")
 @RequestMapping("/api/resume")
 public class ResumeController {
 
