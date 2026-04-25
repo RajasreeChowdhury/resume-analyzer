@@ -3,13 +3,13 @@ FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-# Copy only pom first (better caching)
-COPY pom.xml .
+# Copy pom first for caching
+COPY pom.xml ./
 
-# Download dependencies (cached layer)
+# Download dependencies
 RUN mvn dependency:go-offline -B
 
-# Copy source code
+# Copy source
 COPY src ./src
 
 # Build jar
@@ -20,8 +20,14 @@ FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-# Copy jar from build stage
+# Copy jar (safe explicit handling)
 COPY --from=build /app/target/*.jar app.jar
 
+# Render provides PORT dynamically
+ENV PORT=8080
+
+# JVM production flags (safe default)
+ENV JAVA_OPTS="-Xms128m -Xmx512m"
+
 # Run application
-ENTRYPOINT ["java", "-jar", "app.jar"]s
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar --server.port=$PORT"]
